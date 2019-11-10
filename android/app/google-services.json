@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "774513575759",
+    "firebase_url": "https://message-bb0fa.firebaseio.com",
+    "project_id": "message-bb0fa",
+    "storage_bucket": "message-bb0fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774513575759:android:fda13460e0a6eb8d6c673a",
+        "android_client_info": {
+          "package_name": "in.theieve.message"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "774513575759-pm1d1m12epjc3gnu5acjcec8f2ktjrnf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkqbN-Lin0V1n5qRIyIrW3pMsBxRPSY6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "774513575759-pm1d1m12epjc3gnu5acjcec8f2ktjrnf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
