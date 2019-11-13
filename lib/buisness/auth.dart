@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:message/buisness/validator.dart';
+import 'package:message/models/user.dart';
 
 enum authProblems { UserNotFound, PasswordNotValid, NetworkError, UnknownError }
 
@@ -48,9 +51,50 @@ class Auth {
     return FirebaseAuth.instance.signOut();
   }
 
-  static void addUser(String user) async {}
-  static Future<bool> checkUserExist() async {
-    bool exist = false;
-    try {} catch (e) {}
+  static void addUser(User user) async {
+    await checkUserExist(user.userID).then((value) {
+      if (!value) {
+        print("user ${user.firstName} ${user.email}");
+        Firestore.instance
+            .document("users/${user.userID}")
+            .setData(user.toUserMap());
+      } else {
+        print("user ${user.firstName} ${user.email} exists");
+      }
+    });
+  }
+
+  static Future<bool> checkUserExist(String userID) async {
+    bool exists = false;
+    try {
+      await Firestore.instance.document("users/$userID").get().then((doc) {
+        if (doc.exists)
+          exists = true;
+        else
+          exists = false;
+      });
+      return exists;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<QuerySnapshot> findFriends(String user) async {
+    if (Validator.validateEmail(user)) {
+      return await Firestore.instance
+          .collection("users")
+          .where('email', isEqualTo: user)
+          .getDocuments();
+    } else {
+      return await Firestore.instance
+          .collection("users")
+          .where('username', isEqualTo: user)
+          .getDocuments();
+    }
+  }
+
+  static Future<String> delayFuture(String user) async {
+    await Future.delayed(Duration(seconds: 3));
+    return user;
   }
 }

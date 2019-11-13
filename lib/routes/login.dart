@@ -15,8 +15,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   VoidCallback onBackPressed;
   String email, password;
-  bool loadingProgress=false;
-
+  bool loadingProgress = false;
 
   @override
   void initState() {
@@ -72,18 +71,18 @@ class _LoginState extends State<Login> {
 
   void _emailLogin(String email, String password) async {
     setState(() {
-      loadingProgress=true;
+      loadingProgress = true;
     });
     if (Validator.validateEmail(email) &&
         Validator.validatePassword(password)) {
       SystemChannels.textInput.invokeMethod("TextInput.hide");
 
       try {
-        String user = await Auth.signIn(email, password);
+        await Auth.signIn(email, password);
         onBackPressed();
       } catch (e) {
         setState(() {
-          loadingProgress=false;
+          loadingProgress = false;
         });
         String exception = Auth.getExceptionText(e);
         _showErrorAlert(
@@ -93,6 +92,10 @@ class _LoginState extends State<Login> {
               Navigator.pop(context);
             });
       }
+    } else {
+      setState(() {
+        loadingProgress = false;
+      });
     }
   }
 

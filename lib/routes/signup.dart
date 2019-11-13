@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:message/buisness/auth.dart';
 import 'package:message/buisness/validator.dart';
+import 'package:message/models/user.dart';
 import 'package:message/widget/custom_alert_dialog.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -107,8 +108,15 @@ class _SignupState extends State<Signup> {
       SystemChannels.textInput.invokeMethod("TextInput.hide");
 
       try {
-        String user = await Auth.signUp(email, password);
-        print(user);
+        await Auth.signUp(email, password).then((uID) {
+          Auth.addUser(new User(
+              userID: uID,
+              email: email,
+              firstName: name,
+              profilePictureURL: '',
+              username: username));
+        });
+
         onBackPressed();
       } catch (e) {
         setState(() {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:message/routes/find_friends.dart';
 import 'package:message/routes/home.dart';
 import 'package:message/routes/login.dart';
 import 'package:message/routes/rootscreen.dart';
@@ -19,16 +20,17 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       routes: {
         Selectscreen.id: (context) => Selectscreen(),
         Login.id: (context) => Login(),
         Home.id: (context) => Home(),
         Rootscreen.id: (context) => Rootscreen(),
         Signup.id: (context) => Signup(),
+        FindFriends.id: (context) => FindFriends(),
       },
       initialRoute: Rootscreen.id,
     );

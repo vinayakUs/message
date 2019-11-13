@@ -1,11 +1,13 @@
-class Validator{
+class Validator {
   static bool validateNumber(String text) {
     Pattern pattern = r'^(\d{3})(\d{3})(\d{4})$';
     RegExp regExp = RegExp(pattern);
     return regExp.hasMatch(text);
   }
+
   static bool validatePassword(String text) {
-    Pattern pattern = r'^([\w\!@#$%^&*(),.?":{}|<>]+)$';
+    Pattern pattern =
+        r'^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$';
     RegExp regExp = RegExp(pattern);
     return regExp.hasMatch(text);
   }
