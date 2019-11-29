@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:message/routes/find_friends.dart';
 import 'package:message/routes/home.dart';
@@ -14,9 +12,7 @@ void main() {
 
 // Pass all uncaught errors to Crashlytics.
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
-  runZoned<Future<void>>(() async {
-    runApp(MyApp());
-  }, onError: Crashlytics.instance.recordError);
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

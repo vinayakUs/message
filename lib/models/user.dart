@@ -16,8 +16,7 @@ class User {
       'firstName': firstName,
       'email': email,
       'profilePictureURL': profilePictureURL,
-      'username': username
+      'username': username,
     };
   }
-
 }
