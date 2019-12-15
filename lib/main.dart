@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Color(0xff27272d)),
-x      routes: {
+      routes: {
         Selectscreen.id: (context) => Selectscreen(),
         Login.id: (context) => Login(),
         Home.id: (context) => Home(),
