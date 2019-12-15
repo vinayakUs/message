@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:message/buisness/auth.dart';
 import 'package:message/buisness/getlocation.dart';
 import 'package:message/widget/builder.dart';
@@ -12,7 +13,7 @@ class AddButton extends StatefulWidget {
 }
 
 class _AddButtonState extends State<AddButton> {
-  bool _notFriend = true;
+  bool _friend = false;
   bool _isPresent = false;
   @override
   void initState() {
@@ -20,21 +21,27 @@ class _AddButtonState extends State<AddButton> {
     super.initState();
   }
 
-  void _checkFriend() async {}
   void _checkButtonStatus() async {
-    String loc = GetLocation.getPeople(widget.toUserID);
-    await Auth.getCurrentFireBaseUser().then((currentuser) async {
-      await Auth.getDocumentData(path: loc).then((value) async {
-        for (int i = 0; i < value['request'].length; i++) {
-          if (value['request'][i] == currentuser) {
-            setState(() {
-              _isPresent = true;
-            });
-          } else {
-            setState(() {
-              _isPresent = false;
-            });
-          }
+    await Auth.getCurrentFireBaseUser().then((_currentUser) async {
+      await Auth.getDocumentData(path: GetLocation.getPeople(widget.toUserID))
+          .then((value) async {
+        if (value['request'].contains(_currentUser)) {
+          setState(() {
+            _isPresent = true;
+          });
+        } else {
+          setState(() {
+            _isPresent = false;
+          });
+        }
+        if (value['friends'].contains(_currentUser)) {
+          setState(() {
+            _friend = true;
+          });
+        } else {
+          setState(() {
+            _friend = false;
+          });
         }
       });
     });
@@ -44,8 +51,7 @@ class _AddButtonState extends State<AddButton> {
   Widget build(BuildContext context) {
     return CustomWidgetBuilder(
       builder: (context) {
-        print("state recreate");
-        if (_notFriend) {
+        if (!_friend) {
           return LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return Container(
@@ -59,9 +65,19 @@ class _AddButtonState extends State<AddButton> {
               );
             },
           );
-        } else if (!_notFriend) {
-          return LayoutBuilder();
+        } else if (_friend) {
+          return LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return Container(
+                child: FlatButton(
+                  child: Icon(Icons.report_problem),
+                  onPressed: () {},
+                ),
+              );
+            },
+          );
         }
+        return null;
       },
     );
   }

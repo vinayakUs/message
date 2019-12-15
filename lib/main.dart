@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:message/routes/find_friends.dart';
 import 'package:message/routes/home.dart';
-import 'package:message/routes/login.dart';
+import 'package:message/routes/login_screen.dart';
 import 'package:message/routes/rootscreen.dart';
-import 'package:message/routes/select_screen.dart';
-import 'package:message/routes/signup.dart';
+import 'package:message/routes/selection_screen.dart';
+import 'package:message/routes/signup_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 void main() {
@@ -19,8 +19,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: {
+      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Color(0xff27272d)),
+x      routes: {
         Selectscreen.id: (context) => Selectscreen(),
         Login.id: (context) => Login(),
         Home.id: (context) => Home(),

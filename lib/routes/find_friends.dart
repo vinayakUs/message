@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:message/buisness/auth.dart';
 import 'package:message/buisness/getlocation.dart';
 import 'package:message/routes/friend_request.dart';
-import 'package:message/widget/add.dart';
+import 'package:message/routes/friendsSearch.dart';
+import 'package:message/widget/addButton.dart';
 import 'package:message/widget/builder.dart';
 import 'package:message/widget/customlistview.dart';
 
@@ -39,9 +40,9 @@ class _FindFriendsState extends State<FindFriends> {
                       setState(() {
                         getSearchUser = _getFriendData(userdata);
                       });
-                      await getSearchUser.then((a) {
-                        print(a);
-                      });
+//                      await getSearchUser.then((a) {
+//                        print(a);
+//                      });
                     },
                     icon: Icon(Icons.search),
                   ),
@@ -62,6 +63,12 @@ class _FindFriendsState extends State<FindFriends> {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => FriendRequest()));
                 },
+              ),
+              RaisedButton(
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>FriendsSearch()));
+                },
+                child: Text("Friends"),
               ),
               FutureBuilder(
                 future: getSearchUser,

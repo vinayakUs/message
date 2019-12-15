@@ -108,7 +108,7 @@ class AcceptRejectRequestButton extends StatefulWidget {
 }
 
 class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
-  bool _isaccept = false;
+  bool _isAccept = false;
   bool _isreject = false;
 
   @override
@@ -120,7 +120,7 @@ class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
             children: <Widget>[
               RaisedButton(
                 child: Text("accept"),
-                onPressed: _isaccept
+                onPressed: _isAccept
                     ? null
                     : () async {
                         print(widget.pendingRequestUserID);
@@ -140,11 +140,14 @@ class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
                 onPressed: _isreject
                     ? null
                     : () async {
-                        print("new sdas");
-                        setState(() {
-                          _isaccept = true;
-                        });
-                      },
+                  print(widget.pendingRequestUserID);
+                  await _reject(widget.pendingRequestUserID)
+                      .then((value) {
+                    setState(() {
+                      _isreject = value;
+                    });
+                  });
+                },
               )
             ],
           ),
@@ -156,6 +159,25 @@ class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
   Future _accept(String pendingRequestUserID) async {
     bool returnValue = false;
     String _currentUserID = await Auth.getCurrentFireBaseUser();
+    await Firestore.instance
+        .document(GetLocation.getPeople(pendingRequestUserID))
+        .get()
+        .then((value) async {
+      List a = value.data['friends'];
+
+      final friends = List<String>.from(a);
+
+      if (!friends.contains(_currentUserID)) {
+        friends.add(_currentUserID);
+        Auth.updateDataByUid(
+            path: GetLocation.getPeople(pendingRequestUserID),
+            data: {
+              'friends': friends,
+            });
+      }
+      returnValue = true;
+    });
+    //
     await Firestore.instance
         .document(GetLocation.getPeople(_currentUserID))
         .get()
@@ -179,8 +201,30 @@ class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
       }
       returnValue = true;
     });
+    return returnValue;
+  }
 
-    await Future.delayed(Duration(seconds: 2));
+  Future _reject(String pendingRequestUserID ) async {
+    bool returnValue = false;
+    String _currentUserID = await Auth.getCurrentFireBaseUser();
+    await Firestore.instance
+        .document(GetLocation.getPeople(_currentUserID))
+        .get()
+        .then((value) async {
+      List a = value.data['request'];
+
+      final request = List<String>.from(a);
+
+      if (request.contains(pendingRequestUserID)) {
+        request.remove(pendingRequestUserID);
+        Auth.updateDataByUid(
+            path: GetLocation.getPeople(_currentUserID),
+            data: {
+              'request': request,
+            });
+      }
+      returnValue = true;
+    });
     return returnValue;
   }
 }

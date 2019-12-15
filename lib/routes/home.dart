@@ -15,6 +15,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Future getUserList;
   @override
   void initState() {
     super.initState();
@@ -44,9 +45,35 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
+            RaisedButton(
+              onPressed: () async {
+//            ),
+                setState(() {
+                  getUserList = getUser();
+                });
+              },
+            ),
+            FutureBuilder(
+              future: getUserList,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if(snapshot.hasError){
+                  return Text(snapshot.error.toString());
+                }
+                if(snapshot.connectionState==ConnectionState.waiting&&snapshot.connectionState==ConnectionState.active)
+                  {
+                    return CircularProgressIndicator();
+                  }
+                return Column(children: <Widget>[Text("real tedt")]);
+              },
+            )
           ],
         ),
       ),
     );
+  }
+
+  Future getUser() async {
+
+//    return a;
   }
 }
