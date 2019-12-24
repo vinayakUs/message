@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:message/buisness/auth.dart';
 import 'package:message/buisness/getlocation.dart';
 import 'package:message/widget/builder.dart';
-import 'package:message/widget/customlistview.dart';
 
 class FriendRequest extends StatefulWidget {
   @override
@@ -140,14 +139,14 @@ class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
                 onPressed: _isreject
                     ? null
                     : () async {
-                  print(widget.pendingRequestUserID);
-                  await _reject(widget.pendingRequestUserID)
-                      .then((value) {
-                    setState(() {
-                      _isreject = value;
-                    });
-                  });
-                },
+                        print(widget.pendingRequestUserID);
+                        await _reject(widget.pendingRequestUserID)
+                            .then((value) {
+                          setState(() {
+                            _isreject = value;
+                          });
+                        });
+                      },
               )
             ],
           ),
@@ -204,7 +203,7 @@ class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
     return returnValue;
   }
 
-  Future _reject(String pendingRequestUserID ) async {
+  Future _reject(String pendingRequestUserID) async {
     bool returnValue = false;
     String _currentUserID = await Auth.getCurrentFireBaseUser();
     await Firestore.instance

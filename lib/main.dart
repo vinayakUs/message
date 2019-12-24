@@ -19,16 +19,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark().copyWith(scaffoldBackgroundColor: Color(0xff27272d)),
+      theme:
+          ThemeData.dark().copyWith(scaffoldBackgroundColor: Color(0xff27272d)),
       routes: {
-        Selectscreen.id: (context) => Selectscreen(),
+        SelectScreen.id: (context) => SelectScreen(),
         Login.id: (context) => Login(),
         Home.id: (context) => Home(),
-        Rootscreen.id: (context) => Rootscreen(),
+        RootScreen.id: (context) => RootScreen(),
         Signup.id: (context) => Signup(),
         FindFriends.id: (context) => FindFriends(),
       },
-      initialRoute: Rootscreen.id,
+      initialRoute: RootScreen.id,
     );
   }
 }

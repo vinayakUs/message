@@ -6,8 +6,6 @@ import 'package:message/buisness/getlocation.dart';
 import 'package:message/routes/friend_request.dart';
 import 'package:message/routes/friendsSearch.dart';
 import 'package:message/widget/addButton.dart';
-import 'package:message/widget/builder.dart';
-import 'package:message/widget/customlistview.dart';
 
 class FindFriends extends StatefulWidget {
   static String id = "Find_Friends";
@@ -17,7 +15,7 @@ class FindFriends extends StatefulWidget {
 
 class _FindFriendsState extends State<FindFriends> {
   String userdata;
-  Future<List<Map<String, dynamic>>> getSearchUser;
+  Future<List<Map<String, dynamic>>> getSearchUserList;
   @override
   void initState() {
     super.initState();
@@ -38,22 +36,20 @@ class _FindFriendsState extends State<FindFriends> {
                   IconButton(
                     onPressed: () async {
                       setState(() {
-                        getSearchUser = _getFriendData(userdata);
+                        getSearchUserList = _getSearchUser(userdata);
                       });
-//                      await getSearchUser.then((a) {
-//                        print(a);
-//                      });
                     },
                     icon: Icon(Icons.search),
                   ),
                   Expanded(
                     child: Container(
-                        margin: EdgeInsets.only(right: 20, left: 10),
-                        child: TextField(
-                          onChanged: (value) {
-                            userdata = value;
-                          },
-                        )),
+                      margin: EdgeInsets.only(right: 20, left: 10),
+                      child: TextField(
+                        onChanged: (value) {
+                          userdata = value;
+                        },
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -65,29 +61,19 @@ class _FindFriendsState extends State<FindFriends> {
                 },
               ),
               RaisedButton(
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>FriendsSearch()));
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => FriendsSearch()));
                 },
                 child: Text("Friends"),
               ),
               FutureBuilder(
-                future: getSearchUser,
+                future: getSearchUserList,
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.done &&
                       !snapshot.hasError &&
                       snapshot.data != null) {
-                    // return CustomListViewBuilder(
-                    //   snapshot: snapshot,
-                    //   body: AddButton(
-                    //     toUserID: snapshot.data[index]['userID'],
-                    //     sendFriendRequest: () async {
-                    //       FirebaseUser _currentUserId =
-                    //           await FirebaseAuth.instance.currentUser();
-                    //       _sendFriendRequest(_currentUserId.uid,
-                    //           snapshot.data[index]['userID']);
-                    //     },
-                    //   ),
-                    // );
+//
                     return ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
@@ -168,7 +154,7 @@ class _FindFriendsState extends State<FindFriends> {
     );
   }
 
-  Future<List<Map<String, dynamic>>> _getFriendData(String userdata) async {
+  Future<List<Map<String, dynamic>>> _getSearchUser(String userdata) async {
     List<Map<String, dynamic>> map = [];
     String currentUserID = await Auth.getCurrentFireBaseUser();
     try {
@@ -178,7 +164,6 @@ class _FindFriendsState extends State<FindFriends> {
             map.add(value.documents[i].data);
           }
         }
-        print("map value=$map");
       });
     } catch (e) {
       map = null;
@@ -208,7 +193,7 @@ class _FindFriendsState extends State<FindFriends> {
             Auth.updateDataByUid(
                 path: GetLocation.getPeople(toUserID), data: {'request': req});
             setState(() {
-              getSearchUser = _getFriendData(userdata);
+              getSearchUserList = _getSearchUser(userdata);
             });
           });
         }

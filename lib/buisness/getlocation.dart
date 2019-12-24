@@ -1,9 +1,9 @@
 class GetLocation {
-  static String getPeople(String UID) {
-    return "people/$UID";
+  static String getPeople(String uid) {
+    return "people/$uid";
   }
 
-  static String getUserMap(String UID) {
-    return "users/$UID";
+  static String getUserMap(String uid) {
+    return "users/$uid";
   }
 }

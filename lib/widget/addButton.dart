@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:message/buisness/auth.dart';
 import 'package:message/buisness/getlocation.dart';
 import 'package:message/widget/builder.dart';
 
 class AddButton extends StatefulWidget {
-  Function sendFriendRequest;
-  String toUserID;
+  final Function sendFriendRequest;
+  final String toUserID;
   AddButton({this.sendFriendRequest, this.toUserID});
   @override
   _AddButtonState createState() => _AddButtonState();

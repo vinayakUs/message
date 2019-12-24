@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:message/routes/home.dart';
 import 'package:message/routes/selection_screen.dart';
 
-class Rootscreen extends StatefulWidget {
+class RootScreen extends StatefulWidget {
   static String id = "Root_screen";
   @override
   _RootScreenState createState() => _RootScreenState();
 }
 
-class _RootScreenState extends State<Rootscreen> {
+class _RootScreenState extends State<RootScreen> {
   @override
   void initState() {
-
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return new StreamBuilder<FirebaseUser>(
@@ -22,17 +22,15 @@ class _RootScreenState extends State<Rootscreen> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return new Container(
-            color: Colors.white,
-
+            color: Colors.black,
           );
         } else {
           if (snapshot.hasData) {
             return new Home(
               fireBaseUser: snapshot.data,
-
             );
           } else {
-            return Selectscreen();
+            return SelectScreen();
           }
         }
       },

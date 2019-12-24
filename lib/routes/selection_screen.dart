@@ -5,14 +5,14 @@ import 'package:message/widget/wideButton.dart';
 
 import 'login_screen.dart';
 
-class Selectscreen extends StatefulWidget {
+class SelectScreen extends StatefulWidget {
   static String id = "Selct_screen";
 
   @override
   _SelectScreenState createState() => _SelectScreenState();
 }
 
-class _SelectScreenState extends State<Selectscreen> {
+class _SelectScreenState extends State<SelectScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,24 +42,7 @@ class _SelectScreenState extends State<Selectscreen> {
                   },
                   child: Text("Signup"),
                 ),
-                Row(
-                  children: <Widget>[
-                    CircularButton(
-                      onPressed:(){},
-                      enabled: true,
-                      radius: 1000,
-                      child: Icon(Icons.error,size: 200,),
 
-                    ),
-                    FlatButton(
-                      padding: EdgeInsets.all(0),
-                      onPressed: (){},
-                      child: Icon(Icons.satellite),
-
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10000)),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
