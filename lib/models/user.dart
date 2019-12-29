@@ -10,10 +10,11 @@ class User {
       this.email,
       this.profilePictureURL,
       this.username});
+
   User.fromUserMap(Map<String, dynamic> map) {
     userID = map['userID'];
     firstName = map['firstName'];
-    profilePictureURL=map['profilePictureURL'];
+    profilePictureURL = map['profilePictureURL'];
     email = map['email'];
     username = map['username'];
   }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:message/buisness/auth.dart';
@@ -6,13 +8,13 @@ import 'package:message/models/user.dart';
 import 'package:message/widget/custom_alert_dialog.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
-class Signup extends StatefulWidget {
+class SignUp extends StatefulWidget {
   static String id = "Signin";
   @override
-  _SignupState createState() => _SignupState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _SignupState extends State<Signup> {
+class _SignUpState extends State<SignUp> {
   String email, password, name, username;
   bool loadingProgress = false;
   VoidCallback onBackPressed;

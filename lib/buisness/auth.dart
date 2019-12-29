@@ -109,8 +109,7 @@ class Auth {
     return map;
   }
 
-  static void updateDataByUid(
-      {Map<String, dynamic> data, String path}) async {
+  static void updateDataByUid({Map<String, dynamic> data, String path}) async {
     Firestore.instance.document(path).updateData(data);
   }
   //

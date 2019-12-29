@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:message/buisness/auth.dart';
 import 'package:message/buisness/getlocation.dart';
+import 'package:message/models/user.dart';
 import 'package:message/routes/friend_request.dart';
 import 'package:message/routes/friendsSearch.dart';
 import 'package:message/widget/addButton.dart';
@@ -14,8 +15,9 @@ class FindFriends extends StatefulWidget {
 }
 
 class _FindFriendsState extends State<FindFriends> {
-  String userdata;
-  Future<List<Map<String, dynamic>>> getSearchUserList;
+  String userDetail;
+  Future<List<User>> getSearchUserList;
+
   @override
   void initState() {
     super.initState();
@@ -23,7 +25,6 @@ class _FindFriendsState extends State<FindFriends> {
 
   @override
   Widget build(BuildContext context) {
-    print("object");
     return SafeArea(
       child: Scaffold(
         body: Center(
@@ -35,9 +36,11 @@ class _FindFriendsState extends State<FindFriends> {
                 children: <Widget>[
                   IconButton(
                     onPressed: () async {
-                      setState(() {
-                        getSearchUserList = _getSearchUser(userdata);
-                      });
+                      if (userDetail != "") {
+                        setState(() {
+                          getSearchUserList = _getSearchUser(userDetail);
+                        });
+                      }
                     },
                     icon: Icon(Icons.search),
                   ),
@@ -46,7 +49,7 @@ class _FindFriendsState extends State<FindFriends> {
                       margin: EdgeInsets.only(right: 20, left: 10),
                       child: TextField(
                         onChanged: (value) {
-                          userdata = value;
+                          userDetail = value;
                         },
                       ),
                     ),
@@ -73,7 +76,7 @@ class _FindFriendsState extends State<FindFriends> {
                   if (snapshot.connectionState == ConnectionState.done &&
                       !snapshot.hasError &&
                       snapshot.data != null) {
-//
+                    List<User> snapshotLocal = List<User>.from(snapshot.data);
                     return ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
@@ -92,23 +95,23 @@ class _FindFriendsState extends State<FindFriends> {
                                   Column(
                                     children: <Widget>[
                                       Text(
-                                        "${snapshot.data[index]["firstName"]}",
+                                        "${snapshotLocal[index].firstName}",
                                         style: TextStyle(fontSize: 30),
                                       ),
                                       Text(
-                                        "${snapshot.data[index]["username"]}",
+                                        "${snapshotLocal[index].username}",
                                         style: TextStyle(fontSize: 30),
                                       ),
                                     ],
                                   ),
                                   AddButton(
-                                    toUserID: snapshot.data[index]['userID'],
+                                    toUserID: snapshotLocal[index].userID,
                                     sendFriendRequest: () async {
                                       FirebaseUser _currentUserId =
                                           await FirebaseAuth.instance
                                               .currentUser();
                                       _sendFriendRequest(_currentUserId.uid,
-                                          snapshot.data[index]['userID']);
+                                          snapshotLocal[index].userID);
                                     },
                                   ),
                                 ],
@@ -130,7 +133,7 @@ class _FindFriendsState extends State<FindFriends> {
                       ),
                     );
                   }
-                  if (snapshot.data == []) {
+                  if (snapshot.data == null) {
                     return Text("no user found");
                   }
                   if (snapshot.hasError) {
@@ -154,19 +157,21 @@ class _FindFriendsState extends State<FindFriends> {
     );
   }
 
-  Future<List<Map<String, dynamic>>> _getSearchUser(String userdata) async {
-    List<Map<String, dynamic>> map = [];
+
+  Future<List<User>> _getSearchUser(String userdata) async {
+    List<User> map = [];
     String currentUserID = await Auth.getCurrentFireBaseUser();
     try {
       await Auth.findFriends(userdata).then((value) {
         for (int i = 0; i < value.documents.length; i++) {
           if (value.documents[i].data['userID'].toString() != currentUserID) {
-            map.add(value.documents[i].data);
+            map.add(User.fromUserMap(value.documents[i].data));
           }
         }
       });
     } catch (e) {
       map = null;
+     debugPrint(e.toString().toString());
     }
     return map;
   }
@@ -193,13 +198,13 @@ class _FindFriendsState extends State<FindFriends> {
             Auth.updateDataByUid(
                 path: GetLocation.getPeople(toUserID), data: {'request': req});
             setState(() {
-              getSearchUserList = _getSearchUser(userdata);
+              getSearchUserList = _getSearchUser(userDetail);
             });
           });
         }
       });
     } catch (e) {
-      print("error $e");
+      debugPrint("error $e");
     }
   }
 }

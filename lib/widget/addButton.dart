@@ -4,7 +4,7 @@ import 'package:message/buisness/getlocation.dart';
 import 'package:message/widget/builder.dart';
 
 class AddButton extends StatefulWidget {
-  final Function sendFriendRequest;
+  final VoidCallback sendFriendRequest;
   final String toUserID;
   AddButton({this.sendFriendRequest, this.toUserID});
   @override

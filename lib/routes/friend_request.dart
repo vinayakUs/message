@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:message/buisness/auth.dart';
 import 'package:message/buisness/getlocation.dart';
+import 'package:message/models/user.dart';
 import 'package:message/widget/builder.dart';
 
 class FriendRequest extends StatefulWidget {
@@ -10,7 +11,6 @@ class FriendRequest extends StatefulWidget {
 }
 
 class _FriendRequestState extends State<FriendRequest> {
-  Widget a = Text("");
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -23,9 +23,7 @@ class _FriendRequestState extends State<FriendRequest> {
                 if (snapshot.connectionState == ConnectionState.done &&
                     !snapshot.hasError &&
                     snapshot.hasData) {
-                  // return CustomListViewBuilder(
-                  //   snapshot: snapshot,
-                  // );
+                  List<User> snapshotLocal = List<User>.from(snapshot.data);
                   return ListView.separated(
                     shrinkWrap: true,
                     itemCount: snapshot.data.length,
@@ -41,17 +39,17 @@ class _FriendRequestState extends State<FriendRequest> {
                               Column(
                                 children: <Widget>[
                                   Text(
-                                    "${snapshot.data[index]["firstName"]}",
+                                    "${snapshotLocal[index].firstName}",
                                     style: TextStyle(fontSize: 30),
                                   ),
                                   Text(
-                                    "${snapshot.data[index]["username"]}",
+                                    "${snapshotLocal[index].username}",
                                     style: TextStyle(fontSize: 30),
                                   ),
                                 ],
                               ),
                               AcceptRejectRequestButton(
-                                  snapshot.data[index]['userID']),
+                                  snapshotLocal[index].userID),
                             ],
                           ),
                         ],
@@ -74,26 +72,23 @@ class _FriendRequestState extends State<FriendRequest> {
     );
   }
 
-  Future<List<Map<String, dynamic>>> _getFriendRequest() async {
-    List<String> requestID;
-    List<Map<String, dynamic>> map = [];
-    String _currentuser = await Auth.getCurrentFireBaseUser();
+  Future<List<User>> _getFriendRequest() async {
+    List<User> map = [];
+    String _currentUser = await Auth.getCurrentFireBaseUser();
+    print("${_currentUser} error at");
 
-    await Auth.getDocumentData(path: GetLocation.getPeople(_currentuser))
+    await Auth.getDocumentData(path: GetLocation.getPeople(_currentUser))
         .then((userdata) async {
-      requestID = new List<String>.from(userdata['request']);
-
+      List<String> requestID = new List<String>.from(userdata['request']);
       for (int i = 0; i < requestID.length; i++) {
         await Auth.getDocumentData(
                 path: GetLocation.getUserMap(requestID[i].toString()))
             .then((user) async {
-          map.add(user);
+          map.add(User.fromUserMap(user));
         });
       }
     });
-    final data = new List<Map<String, dynamic>>.from(map);
-    print("map $map");
-    return data;
+    return map;
   }
 }
 
@@ -107,8 +102,9 @@ class AcceptRejectRequestButton extends StatefulWidget {
 }
 
 class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
+  bool _isClicked = false;
   bool _isAccept = false;
-  bool _isreject = false;
+  bool _isReject = false;
 
   @override
   Widget build(BuildContext context) {
@@ -122,12 +118,13 @@ class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
                 onPressed: _isAccept
                     ? null
                     : () async {
-                        print(widget.pendingRequestUserID);
                         await _accept(widget.pendingRequestUserID)
                             .then((value) {
-                          setState(() {
-                            _isreject = value;
-                          });
+                          if (value) {
+                            setState(() {
+                              _isReject = value;
+                            });
+                          }
                         });
                       },
               ),
@@ -136,15 +133,16 @@ class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
               ),
               RaisedButton(
                 child: Text("reject"),
-                onPressed: _isreject
+                onPressed: _isReject
                     ? null
                     : () async {
-                        print(widget.pendingRequestUserID);
                         await _reject(widget.pendingRequestUserID)
                             .then((value) {
-                          setState(() {
-                            _isreject = value;
-                          });
+                          if (value) {
+                            setState(() {
+                              _isAccept = value;
+                            });
+                          }
                         });
                       },
               )
@@ -155,75 +153,87 @@ class _AcceptRejectRequestButtonState extends State<AcceptRejectRequestButton> {
     );
   }
 
-  Future _accept(String pendingRequestUserID) async {
+  Future<bool> _accept(String pendingRequestUserID) async {
     bool returnValue = false;
-    String _currentUserID = await Auth.getCurrentFireBaseUser();
-    await Firestore.instance
-        .document(GetLocation.getPeople(pendingRequestUserID))
-        .get()
-        .then((value) async {
-      List a = value.data['friends'];
+    if (!_isClicked) {
+      _isClicked = true;
+      print("accept called");
+      String _currentUserID = await Auth.getCurrentFireBaseUser();
+      await Firestore.instance
+          .document(GetLocation.getPeople(pendingRequestUserID))
+          .get()
+          .then(
+        (value) async {
+          final friends = List<String>.from(value.data['friends']);
 
-      final friends = List<String>.from(a);
+          if (!friends.contains(_currentUserID)) {
+            friends.add(_currentUserID);
+            Auth.updateDataByUid(
+                path: GetLocation.getPeople(pendingRequestUserID),
+                data: {
+                  'friends': friends,
+                });
+          }
+          returnValue = true;
+        },
+      );
+      //
+      try {
+        await Firestore.instance
+            .document(GetLocation.getPeople(_currentUserID))
+            .get()
+            .then((value) async {
+          List a = value.data['friends'];
+          List b = value.data['request'];
 
-      if (!friends.contains(_currentUserID)) {
-        friends.add(_currentUserID);
-        Auth.updateDataByUid(
-            path: GetLocation.getPeople(pendingRequestUserID),
-            data: {
-              'friends': friends,
-            });
+          final friends = List<String>.from(a);
+          final request = List<String>.from(b);
+
+          if (!friends.contains(pendingRequestUserID) &&
+              request.contains(pendingRequestUserID)) {
+            friends.add(pendingRequestUserID);
+            request.remove(pendingRequestUserID);
+            Auth.updateDataByUid(
+                path: GetLocation.getPeople(_currentUserID),
+                data: {
+                  'request': request,
+                  'friends': friends,
+                });
+          }
+        });
+      } catch (e) {
+        returnValue = false;
       }
-      returnValue = true;
-    });
-    //
-    await Firestore.instance
-        .document(GetLocation.getPeople(_currentUserID))
-        .get()
-        .then((value) async {
-      List a = value.data['friends'];
-      List b = value.data['request'];
+    }
 
-      final friends = List<String>.from(a);
-      final request = List<String>.from(b);
-
-      if (!friends.contains(pendingRequestUserID) &&
-          request.contains(pendingRequestUserID)) {
-        friends.add(pendingRequestUserID);
-        request.remove(pendingRequestUserID);
-        Auth.updateDataByUid(
-            path: GetLocation.getPeople(_currentUserID),
-            data: {
-              'request': request,
-              'friends': friends,
-            });
-      }
-      returnValue = true;
-    });
     return returnValue;
   }
 
   Future _reject(String pendingRequestUserID) async {
     bool returnValue = false;
-    String _currentUserID = await Auth.getCurrentFireBaseUser();
-    await Firestore.instance
-        .document(GetLocation.getPeople(_currentUserID))
-        .get()
-        .then((value) async {
-      List a = value.data['request'];
+    if (!_isClicked) {
+      _isClicked = true;
+      String _currentUserID = await Auth.getCurrentFireBaseUser();
+      await Firestore.instance
+          .document(GetLocation.getPeople(_currentUserID))
+          .get()
+          .then((value) async {
+        List a = value.data['request'];
 
-      final request = List<String>.from(a);
+        final request = List<String>.from(a);
 
-      if (request.contains(pendingRequestUserID)) {
-        request.remove(pendingRequestUserID);
-        Auth.updateDataByUid(
-            path: GetLocation.getPeople(_currentUserID),
-            data: {
-              'request': request,
-            });
-      }
-      returnValue = true;
-    });
+        if (request.contains(pendingRequestUserID)) {
+          request.remove(pendingRequestUserID);
+          Auth.updateDataByUid(
+              path: GetLocation.getPeople(_currentUserID),
+              data: {
+                'request': request,
+              });
+        }
+        returnValue = true;
+      });
+    }
+
     return returnValue;
   }
 }

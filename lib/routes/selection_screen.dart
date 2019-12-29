@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:message/routes/signup_screen.dart';
-import 'package:message/widget/circularButton.dart';
+import 'package:message/routes/signup_screen_1.dart';
 import 'package:message/widget/wideButton.dart';
 
 import 'login_screen.dart';
@@ -38,7 +37,7 @@ class _SelectScreenState extends State<SelectScreen> {
                   enabled: true,
                   background: Theme.of(context).primaryColorLight,
                   onPressed: () {
-                    Navigator.pushNamed(context, Signup.id);
+                    Navigator.pushNamed(context, SignUp.id);
                   },
                   child: Text("Signup"),
                 ),

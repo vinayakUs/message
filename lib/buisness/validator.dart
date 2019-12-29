@@ -17,4 +17,18 @@ class Validator {
     RegExp regExp = RegExp(pattern);
     return regExp.hasMatch(text);
   }
+  static bool emptyCheck(String str){
+    bool type=true;
+    if(str==""){
+      type=false;
+    }
+    return type;
+  }
+  static bool emptyCheckArray(String str){
+    bool type=true;
+    if(str==""){
+      type=false;
+    }
+    return type;
+  }
 }
