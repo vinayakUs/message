@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:message/routes/signup_screen_1.dart';
+import 'package:message/routes/temp/temp.dart';
 import 'package:message/widget/wideButton.dart';
 
 import 'login_screen.dart';
@@ -33,15 +34,23 @@ class _SelectScreenState extends State<SelectScreen> {
                 SizedBox(
                   height: 10,
                 ),
+                // WideButton(
+                //   enabled: true,
+                //   background: Theme.of(context).primaryColorLight,
+                //   onPressed: () {
+                //     Navigator.pushNamed(context, SignUp.id);
+                //   },
+                //   child: Text("Signup"),
+                // ),
                 WideButton(
                   enabled: true,
                   background: Theme.of(context).primaryColorLight,
                   onPressed: () {
-                    Navigator.pushNamed(context, SignUp.id);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => TempScreen()));
                   },
-                  child: Text("Signup"),
+                  child: Text("SignupTemp"),
                 ),
-
               ],
             ),
           ),

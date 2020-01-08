@@ -9,6 +9,20 @@ import 'package:message/models/user.dart';
 enum authProblems { UserNotFound, PasswordNotValid, NetworkError, UnknownError }
 
 class Auth {
+  static checkUserDataExist(String uid) async {
+    bool _result = false;
+    await Firestore.instance
+        .document(GetLocation.getUserMap(uid))
+        .get()
+        .then((value) {
+      if (value.exists) {
+        _result = true;
+      }
+    });
+
+    return _result;
+  }
+
   static Future<String> signUp(String email, String password) async {
     AuthResult authResult = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
@@ -43,6 +57,9 @@ class Auth {
           break;
         case 'The email address is already in use by another account.':
           return 'Email address is already taken.';
+          break;
+        case 'The email address is badly formatted.':
+          return 'Email badly formatted.';
           break;
         default:
           return 'Unknown error occured.';

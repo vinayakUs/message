@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class Validator {
   static bool validateNumber(String text) {
     Pattern pattern = r'^(\d{3})(\d{3})(\d{4})$';
@@ -17,18 +19,17 @@ class Validator {
     RegExp regExp = RegExp(pattern);
     return regExp.hasMatch(text);
   }
-  static bool emptyCheck(String str){
-    bool type=true;
-    if(str==""){
-      type=false;
+
+
+  static bool isemptyandnull(List arr) {
+    bool result = false;
+
+    for (int i = 0; i < arr.length; i++) {
+      if (arr[i] == null || arr[i] == "") {
+        result = true;
+        break;
+      }
     }
-    return type;
-  }
-  static bool emptyCheckArray(String str){
-    bool type=true;
-    if(str==""){
-      type=false;
-    }
-    return type;
+    return result;
   }
 }

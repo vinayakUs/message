@@ -75,7 +75,6 @@ class _FriendRequestState extends State<FriendRequest> {
   Future<List<User>> _getFriendRequest() async {
     List<User> map = [];
     String _currentUser = await Auth.getCurrentFireBaseUser();
-    print("${_currentUser} error at");
 
     await Auth.getDocumentData(path: GetLocation.getPeople(_currentUser))
         .then((userdata) async {
