@@ -6,7 +6,6 @@ import 'package:message/routes/home.dart';
 import 'package:message/routes/login_screen.dart';
 import 'package:message/routes/rootscreen.dart';
 import 'package:message/routes/selection_screen.dart';
-import 'package:message/routes/signup_screen_1.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:message/routes/temp/temp_state.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +34,7 @@ class MyApp extends StatelessWidget {
         Login.id: (context) => Login(),
         Home.id: (context) => Home(),
         RootScreen.id: (context) => RootScreen(),
-        SignUp.id: (context) => SignUp(),
+        // SignUp.id: (context) => SignUp(),
         FindFriends.id: (context) => FindFriends(),
       },
       initialRoute: RootScreen.id,
